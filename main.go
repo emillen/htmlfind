@@ -37,9 +37,6 @@ func main() {
 	if err != nil {
 		panic(errors.New("Failed to read from stdin"))
 	}
-	if len(os.Args) < 2 {
-		panic(errors.New("not enough arguments"))
-	}
 
 	if len(os.Args) >= 3 && os.Args[1] == "text" {
 		getText(bytes, strings.Join(os.Args[2:], " "))
