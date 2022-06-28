@@ -1,4 +1,4 @@
-module github.com/emilen/htparse
+module github.com/emilen/htmlfind
 
 go 1.18
 
