@@ -1,4 +1,4 @@
-module github.com/emilen/htmlfind
+module github.com/emillen/htmlfind
 
 go 1.18
 

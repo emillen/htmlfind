@@ -4,7 +4,7 @@ Takes html on stdin, find things in it, and print it to stdout
 
 ## Install
 ```
-go install github.com/emilen/htmlfind@latest
+go install github.com/emillen/htmlfind@latest
 ```
 
 ## Usage
