@@ -102,6 +102,19 @@ func printAttribs(htmlBytes []byte, attributes []string) {
 
 	}
 }
+func traverseAndPrint(node *html.Node) {
+	if node == nil {
+		return
+	}
+	if node.Type == html.TextNode {
+		fmt.Print(node.Data)
+	}
+	if node.Type == html.ElementNode {
+		fmt.Println()
+		traverseAndPrint(node.FirstChild)
+	}
+	traverseAndPrint(node.NextSibling)
+}
 
 func printText(htmlBytes []byte, selector string) {
 	sel, err := css.Parse(selector)
@@ -113,10 +126,11 @@ func printText(htmlBytes []byte, selector string) {
 	if err != nil {
 		panic(err)
 	}
+
 	for _, ele := range sel.Select(node) {
 		if ele.FirstChild != nil {
 
-			fmt.Println(ele.FirstChild.Data)
+			traverseAndPrint(ele.FirstChild)
 		}
 	}
 }
