@@ -5,9 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
+	"strings"
 
+	"github.com/ericchiang/css"
 	"golang.org/x/net/html"
 )
 
@@ -15,36 +16,30 @@ func main() {
 	bytes, err := ioutil.ReadAll(os.Stdin)
 
 	if len(os.Args) < 3 {
-		log.Fatal(errors.New("not enough arguments"))
+		panic(errors.New("not enough arguments"))
 	}
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	if os.Args[1] == "text" {
-		getText(bytes, os.Args[2:])
+		getText(bytes, strings.Join(os.Args[2:], " "))
 	}
 }
 
-func getText(htmlBytes []byte, tagNames []string) {
-
-	reader := bytes.NewReader(htmlBytes)
-
-	tokenizer := html.NewTokenizer(reader)
-
-	for {
-		tokenType := tokenizer.Next()
-
-		if tokenType == html.ErrorToken {
-			return
-		}
-
-		if tokenType == html.StartTagToken {
-			if contains(tagNames, tokenizer.Token().Data) {
-				tokenizer.Next()
-				fmt.Println(tokenizer.Token().Data)
-			}
-		}
+func getText(htmlBytes []byte, selector string) {
+	sel, err := css.Parse(selector)
+	if err != nil {
+		panic(err)
 	}
+	reader := bytes.NewReader(htmlBytes)
+	node, err := html.Parse(reader)
+	if err != nil {
+		panic(err)
+	}
+	for _, ele := range sel.Select(node) {
+		fmt.Println(ele.FirstChild.Data)
+	}
+	fmt.Println()
 }
 
 func contains(stringSlice []string, s string) bool {
