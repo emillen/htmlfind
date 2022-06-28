@@ -24,12 +24,12 @@ Commands
 `
 
 func main() {
-	file := os.Stdin
-	fi, _ := file.Stat()
+	stat, _ := os.Stdin.Stat()
+	if (stat.Mode() & os.ModeCharDevice) != 0 {
 
-	if fi.Size() <= 0 {
+		fmt.Println("No input on stdin")
 		fmt.Print(help)
-		return
+		os.Exit(1)
 	}
 
 	bytes, err := ioutil.ReadAll(os.Stdin)
@@ -39,26 +39,27 @@ func main() {
 	}
 
 	if len(os.Args) >= 3 && os.Args[1] == "text" {
-		getText(bytes, strings.Join(os.Args[2:], " "))
+		printText(bytes, strings.Join(os.Args[2:], " "))
 		return
 	}
 
 	if len(os.Args) >= 3 && os.Args[1] == "attr" {
 
-		getAttribs(bytes, os.Args[2:])
+		printAttribs(bytes, os.Args[2:])
 		return
 	}
 
 	if len(os.Args) >= 2 && os.Args[1] == "comments" {
 
-		getComments(bytes)
+		printComments(bytes)
 		return
 	}
 
 	fmt.Print(help)
+	os.Exit(2)
 }
 
-func getComments(htmlBytes []byte) {
+func printComments(htmlBytes []byte) {
 	reader := bytes.NewReader(htmlBytes)
 	tokenizer := html.NewTokenizer(reader)
 
@@ -78,7 +79,7 @@ func getComments(htmlBytes []byte) {
 
 }
 
-func getAttribs(htmlBytes []byte, attributes []string) {
+func printAttribs(htmlBytes []byte, attributes []string) {
 	reader := bytes.NewReader(htmlBytes)
 	tokenizer := html.NewTokenizer(reader)
 
@@ -102,7 +103,7 @@ func getAttribs(htmlBytes []byte, attributes []string) {
 	}
 }
 
-func getText(htmlBytes []byte, selector string) {
+func printText(htmlBytes []byte, selector string) {
 	sel, err := css.Parse(selector)
 	if err != nil {
 		panic(err)
