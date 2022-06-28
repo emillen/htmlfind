@@ -131,6 +131,7 @@ func printText(htmlBytes []byte, selector string) {
 		if ele.FirstChild != nil {
 
 			traverseAndPrint(ele.FirstChild)
+			fmt.Println()
 		}
 	}
 }
